@@ -1,0 +1,5 @@
+example input file which will be commited
+put your input files in this directory if you want to
+e.g. day01_test.txt day01_p1.txt day01_p2.txt
+no other input files will be commited
+READ: https://adventofcode.com/2024/about#:~:text=Can%20I%20copy,it%20something%20similar.
