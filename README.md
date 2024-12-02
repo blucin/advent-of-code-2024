@@ -16,4 +16,5 @@ $ mix dayXX <input_file_path>
 | days | part1 | part2 |
 |------|:-----:|:-----:|
 |  01  |   *   |   *   |
+|  02  |   *   |   *   |
 
