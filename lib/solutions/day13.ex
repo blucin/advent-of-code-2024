@@ -25,6 +25,8 @@ defmodule Solutions.Day13 do
     p = (px * by - py * bx) / (ax * by - ay * bx)
     q = (px - p * ax) / bx
 
+    # WARNING: Not a failsafe way to check for fractional parts of a float
+    # read: https://elixirforum.com/t/how-can-i-get-the-fractional-part-of-a-float-only/29979/22
     if (p - trunc(p)) * 1_000_000 == 0 and (q - trunc(q)) * 1_000_000 == 0 do
       3 * trunc(p) + trunc(q)
     else
