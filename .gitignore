@@ -31,3 +31,4 @@ lib/inputs/*.txt
 
 # Intial Implementations
 *.py
+.env
