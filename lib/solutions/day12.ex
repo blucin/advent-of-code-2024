@@ -5,10 +5,11 @@ defmodule Solutions.Day12 do
     r < 0 or r >= len or c < 0 or c >= wid or Enum.at(Enum.at(grid, r), c) != target_char
   end
 
-  defp dfs(grid, r, c, seen, area, perimeter) do
+  defp dfs(grid, r, c, seen, area, perimeter, sides) do
     seen = MapSet.put(seen, {r, c})
+    curr_char = Enum.at(Enum.at(grid, r), c)
 
-    valid_dirs =
+    valid_xy_dirs =
       [
         {1, 0},
         {-1, 0},
@@ -16,21 +17,36 @@ defmodule Solutions.Day12 do
         {0, -1}
       ]
       |> Enum.filter(fn {dr, dc} ->
-        not is_border!(r + dr, c + dc, Enum.at(Enum.at(grid, r), c), grid)
+        not is_border!(r + dr, c + dc, curr_char, grid)
       end)
 
-    perimeter = perimeter + (4 - length(valid_dirs))
+    corners = [
+      {1, 1},
+      {1, -1},
+      {-1, 1},
+      {-1, -1}
+    ] |> Enum.filter(fn {dr, dc} ->
+      not is_border!(r + dr, c + dc, curr_char, grid)
+    end)
+
+    sides = case length(corners) do
+      1 -> sides + 1
+      2 -> sides + 2
+      3 -> sides + 1
+      _ -> sides
+    end
+    perimeter = perimeter + (4 - length(valid_xy_dirs))
     area = area + 1
 
-    Enum.reduce(valid_dirs, {area, perimeter, seen}, fn {dr, dc},
-                                                        {acc_area, acc_perimeter, acc_seen} ->
+    Enum.reduce(valid_xy_dirs, {area, perimeter, sides, seen}, fn {dr, dc},
+                                                        {acc_area, acc_perimeter, acc_sides, acc_seen} ->
       if MapSet.member?(acc_seen, {r + dr, c + dc}) do
-        {acc_area, acc_perimeter, acc_seen}
+        {acc_area, acc_perimeter, acc_sides, acc_seen}
       else
-        {new_area, new_perimeter, new_seen} =
-          dfs(grid, r + dr, c + dc, acc_seen, acc_area, acc_perimeter)
+        {new_area, new_perimeter, new_sides, new_seen} =
+          dfs(grid, r + dr, c + dc, acc_seen, acc_area, acc_perimeter, acc_sides)
 
-        {new_area, new_perimeter, new_seen}
+        {new_area, new_perimeter, new_sides, new_seen}
       end
     end)
   end
@@ -38,18 +54,19 @@ defmodule Solutions.Day12 do
   def solve(lines) do
     grid = Enum.map(lines, &String.split(&1, "", trim: true))
 
-    {part1, _} =
+    {part1, part2, _} =
       for {line, ri} <- Enum.with_index(grid),
           {_, ci} <- Enum.with_index(line),
-          reduce: {0, MapSet.new()} do {acc, seen} ->
+          reduce: {0, 0, MapSet.new()} do {acc1, acc2, seen} ->
         if MapSet.member?(seen, {ri, ci}) do
-          {acc, seen}
+          {acc1, acc2, seen}
         else
-          {area, perimeter, new_seen} = dfs(grid, ri, ci, seen, 0, 0)
-          {acc + area * perimeter, new_seen}
+          {area, perimeter, sides, seen} = dfs(grid, ri, ci, seen, 0, 0, 0)
+          IO.inspect({grid |> Enum.at(ri) |> Enum.at(ci), area, sides})
+          {acc1 + area * perimeter, acc2 + area * sides, seen}
         end
       end
 
-    {part1, 0}
+    {part1, part2}
   end
 end

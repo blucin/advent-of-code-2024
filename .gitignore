@@ -28,7 +28,9 @@ advent_of_code_2024-*.tar
 # Ignore input files of AoC
 lib/inputs/*.txt
 !lib/inputs/test.txt
+*.txt
+archived/*
+.vscode/*
 
 # Intial Implementations
-*.py
 .env
